@@ -37,6 +37,12 @@
       border-bottom: 1px solid #222;
     }
     
+    .header .anchor-icon {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+    
     .header h1 {
       font-size: 3rem;
       font-weight: 700;
@@ -48,6 +54,13 @@
     .header .subtitle {
       font-size: 1.1rem;
       color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+    
+    .tagline {
+      font-size: 1rem;
+      color: var(--teal-light);
+      font-style: italic;
       margin-bottom: 24px;
     }
     
@@ -74,6 +87,66 @@
       color: var(--text-dim);
       text-transform: uppercase;
       letter-spacing: 0.1em;
+    }
+    
+    /* About Section */
+    .about {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      text-align: center;
+    }
+    
+    .about h2 {
+      font-size: 1.4rem;
+      color: var(--accent);
+      margin-bottom: 16px;
+      letter-spacing: 0.05em;
+    }
+    
+    .about p {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    
+    .about .highlight {
+      color: var(--teal-light);
+      font-weight: 600;
+    }
+    
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 24px;
+      text-align: left;
+    }
+    
+    @media (max-width: 600px) {
+      .about-grid { grid-template-columns: 1fr; }
+    }
+    
+    .about-card {
+      background: var(--surface);
+      border: 1px solid #222;
+      border-radius: 8px;
+      padding: 20px;
+    }
+    
+    .about-card h4 {
+      color: var(--accent);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    
+    .about-card p {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      line-height: 1.5;
     }
     
     .container {
@@ -283,17 +356,11 @@
       color: var(--teal);
       text-decoration: none;
     }
-    
-    .tagline {
-      font-size: 1rem;
-      color: var(--teal-light);
-      font-style: italic;
-      margin-top: 8px;
-    }
   </style>
 </head>
 <body>
   <div class="header">
+    <span class="anchor-icon">⚓</span>
     <h1>H E L M</h1>
     <div class="subtitle">Holographically Encoded Learning Model</div>
     <div class="tagline">"AI that learns, not just trains."</div>
@@ -317,6 +384,31 @@
     </div>
   </div>
 
+  <div class="about">
+    <h2>What Is HELM?</h2>
+    <p>
+      Traditional AI stores knowledge inside massive models — billions of parameters that must be rebuilt every time you want to add something new. 
+      HELM takes a different approach: <span class="highlight">knowledge lives outside the model</span>, stored as compact mathematical fingerprints that can be searched in milliseconds.
+    </p>
+    <p>
+      A small reasoning model reads the relevant knowledge and generates answers — <span class="highlight">4-5x faster</span> than building the answer from scratch, because it doesn't have to figure out what it already knows.
+    </p>
+    <div class="about-grid">
+      <div class="about-card">
+        <h4>🧠 Learn, Don't Train</h4>
+        <p>Add knowledge by adding vectors. No retraining. No rebuilding. The model grows continuously.</p>
+      </div>
+      <div class="about-card">
+        <h4>🔒 Private by Design</h4>
+        <p>Knowledge vectors can't be reversed to reveal source data. Privacy isn't a policy — it's math.</p>
+      </div>
+      <div class="about-card">
+        <h4>📦 Portable Knowledge</h4>
+        <p>25.9MB holds 3,110 facts across 145+ domains. Runs on a laptop. No cloud required.</p>
+      </div>
+    </div>
+  </div>
+
   <div class="container">
     <div class="search-box">
       <input type="text" id="query" placeholder="Ask a question... (e.g., 'How does gravity work?')" autofocus>
@@ -326,14 +418,14 @@
     <div id="results-area">
       <div class="empty-state">
         <div class="icon">⚓</div>
-        <p>Ask a question to see HELM in action. Try: "How does gravity work?" or "What is quantum entanglement?".</p>
-        <p style="margin-top: 8px; font-size: 0.85rem;">Watch knowledge get retrieved and context assembled in real-time. Best results: science, math, technology, history. and context is built in real-time.</p>
+        <p>Try: "How does gravity work?" or "What is quantum entanglement?"</p>
+        <p style="margin-top: 8px; font-size: 0.85rem;">Watch knowledge get retrieved and context assembled in real-time.</p>
       </div>
     </div>
   </div>
 
   <div class="footer">
-    <p>HELM — Holographically Encoded Learning Model</p>
+    <p>⚓ HELM — Holographically Encoded Learning Model</p>
     <p style="margin-top: 4px;">Built for $30. Runs on a laptop. Patent-pending.</p>
     <p style="margin-top: 8px;"><a href="https://github.com/Non-Zero-AI">Non-Zero-AI on GitHub</a></p>
   </div>
@@ -415,15 +507,16 @@
 
           <div class="panel">
             <div class="panel-header">
-              <h3>📝 Context → Prompt</h3>
-              <span class="badge badge-generate">Ready for LLM</span>
+              <h3>🎯 HELM Response</h3>
+              <span class="badge badge-generate">Context-Aware</span>
             </div>
             <div class="panel-body">
               <div class="answer-text">
                 <div class="helmet-context">${escapeHtml(prompt)}</div>
                 <p style="color: var(--text-dim); font-size: 0.85rem; margin-top: 12px;">
-                  This prompt is ready to be sent to any language model. 
-                  The knowledge context grounds the model's response, making it faster and more accurate.
+                  The knowledge context is injected into the reasoning model's prompt. 
+                  Instead of generating from scratch, the model grounds its response in retrieved facts — 
+                  <strong>faster, more accurate, and verifiable</strong>.
                 </p>
               </div>
             </div>
