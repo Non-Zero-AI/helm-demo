@@ -1,0 +1,12 @@
+{
+  "gravity": ["gravitational", "general relativity", "curvature", "spacetime", "newton", "einstein", "mass", "attraction", "force", "orbit"],
+  "quantum": ["entanglement", "superposition", "wave function", "particle", "photon", "qubit", "uncertainty", "planck"],
+  "photosynthesis": ["plant", "chlorophyll", "light energy", "glucose", "carbon dioxide", "oxygen", "sunlight"],
+  "dna": ["genetic", "gene", "genome", "nucleotide", "chromosome", "heredity", "mutation", "double helix"],
+  "evolution": ["natural selection", "darwin", "adaptation", "species", "mutation", "genetic", "survival"],
+  "democracy": ["governance", "voting", "election", "parliament", "constitution", "political", "republic"],
+  "music": ["instrument", "melody", "harmony", "rhythm", "composer", "symphony", "genre"],
+  "gravity work": ["gravitational", "general relativity", "newton", "einstein", "curvature", "spacetime"],
+  "king of pop": ["michael jackson", "pop music", "musician", "entertainer", "singer"],
+  "gravity": ["gravitational", "relativity", "spacetime", "newton", "einstein", "curvature", "orbit", "planetary"]
+}

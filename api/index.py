@@ -9,9 +9,10 @@ import re
 import time
 
 KNOWLEDGE_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'knowledge-light.json')
+SYNONYMS_PATH = os.path.join(os.path.dirname(__file__), 'synonyms.json')
 knowledge = None
+synonyms = None
 
-# Stop words to ignore in similarity matching
 STOP_WORDS = set('the a an is are was were be been being have has had do does did will would shall should may might can could of in to for on with at by from as into through during before after above below between out off over under again further then once here there when where why how all each every both few more most other some such no nor not only own same so than too very s t d ll ve re m'.split())
 
 def load_knowledge():
@@ -21,37 +22,52 @@ def load_knowledge():
             knowledge = json.load(f)
     return knowledge
 
+def load_synonyms():
+    global synonyms
+    if synonyms is None:
+        with open(SYNONYMS_PATH) as f:
+            synonyms = json.load(f)
+    return synonyms
+
+def expand_query(query):
+    """Add related terms to the query based on synonym dictionary."""
+    syns = load_synonyms()
+    query_lower = query.lower()
+    expanded = set(tokenize(query))
+    
+    # Check each synonym key against the query
+    for key, related in syns.items():
+        if key in query_lower:
+            expanded.update(related)
+    
+    return expanded
+
 def tokenize(text):
     words = re.sub(r'[^\w\s]', ' ', text.lower()).split()
-    return [w for w in words if len(w) > 2 and w not in STOP_WORDS]
+    return set(w for w in words if len(w) > 2 and w not in STOP_WORDS)
 
-def text_similarity(query, content):
-    query_tokens = set(tokenize(query))
-    content_tokens = set(tokenize(content))
+def text_similarity(query_tokens, content):
+    content_tokens = tokenize(content)
     if not query_tokens or not content_tokens:
         return 0
     
-    # Jaccard similarity on meaningful tokens only
     intersection = query_tokens & content_tokens
-    union = query_tokens | content_tokens
-    
-    if not union:
+    if not intersection:
         return 0
     
-    # Weight: intersection size relative to query size (recall-oriented)
     recall = len(intersection) / len(query_tokens)
-    # Bonus for precision
-    precision = len(intersection) / len(content_tokens) if content_tokens else 0
+    precision = len(intersection) / len(content_tokens)
     
-    # Combined score favoring recall
     return (recall * 0.7) + (precision * 0.3)
 
 def search_knowledge(query_text, top_k=5):
     kb = load_knowledge()
+    expanded_tokens = expand_query(query_text)
+    
     scored = []
     for unit in kb['units']:
-        score = text_similarity(query_text, unit['content'])
-        if score > 0.05:  # Minimum threshold
+        score = text_similarity(expanded_tokens, unit['content'])
+        if score > 0.08:
             scored.append({
                 'content': unit['content'],
                 'type': unit['type'],
