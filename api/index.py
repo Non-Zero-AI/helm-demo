@@ -5,12 +5,14 @@ HELM Demo API — Vercel Serverless Function
 from http.server import BaseHTTPRequestHandler
 import json
 import os
-import math
 import re
 import time
 
 KNOWLEDGE_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'knowledge-light.json')
 knowledge = None
+
+# Stop words to ignore in similarity matching
+STOP_WORDS = set('the a an is are was were be been being have has had do does did will would shall should may might can could of in to for on with at by from as into through during before after above below between out off over under again further then once here there when where why how all each every both few more most other some such no nor not only own same so than too very s t d ll ve re m'.split())
 
 def load_knowledge():
     global knowledge
@@ -20,29 +22,45 @@ def load_knowledge():
     return knowledge
 
 def tokenize(text):
-    return [t for t in re.sub(r'[^\w\s]', ' ', text.lower()).split() if len(t) > 2]
+    words = re.sub(r'[^\w\s]', ' ', text.lower()).split()
+    return [w for w in words if len(w) > 2 and w not in STOP_WORDS]
 
 def text_similarity(query, content):
     query_tokens = set(tokenize(query))
     content_tokens = set(tokenize(content))
-    if not query_tokens:
+    if not query_tokens or not content_tokens:
         return 0
-    return len(query_tokens & content_tokens) / len(query_tokens)
+    
+    # Jaccard similarity on meaningful tokens only
+    intersection = query_tokens & content_tokens
+    union = query_tokens | content_tokens
+    
+    if not union:
+        return 0
+    
+    # Weight: intersection size relative to query size (recall-oriented)
+    recall = len(intersection) / len(query_tokens)
+    # Bonus for precision
+    precision = len(intersection) / len(content_tokens) if content_tokens else 0
+    
+    # Combined score favoring recall
+    return (recall * 0.7) + (precision * 0.3)
 
 def search_knowledge(query_text, top_k=5):
     kb = load_knowledge()
     scored = []
     for unit in kb['units']:
         score = text_similarity(query_text, unit['content'])
-        scored.append({
-            'content': unit['content'],
-            'type': unit['type'],
-            'confidence': unit['confidence'],
-            'source': unit['source'].split(':')[0] if ':' in unit['source'] else unit['source'],
-            'score': round(score, 4),
-        })
+        if score > 0.05:  # Minimum threshold
+            scored.append({
+                'content': unit['content'],
+                'type': unit['type'],
+                'confidence': unit['confidence'],
+                'source': unit['source'].split(':')[0] if ':' in unit['source'] else unit['source'],
+                'score': round(score, 4),
+            })
     scored.sort(key=lambda x: x['score'], reverse=True)
-    return [s for s in scored[:top_k] if s['score'] > 0]
+    return scored[:top_k]
 
 def build_prompt(query, context_results):
     context_block = ""
