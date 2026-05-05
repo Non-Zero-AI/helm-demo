@@ -1,2 +1,6 @@
 __pycache__/
 *.pyc
+.venv/
+data/*.parquet
+data/*.faiss
+data/.cache/
